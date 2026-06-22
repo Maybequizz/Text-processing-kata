@@ -1,209 +1,291 @@
-# Testing the TDD Subagent System
+# Testing the Redesigned TDD System
 
-This document guides you through a complete test of the 3-phase TDD system using the **Text Processing Kata**.
+This document guides you through the OPTIMIZED 3-phase TDD system with inline questionnaires and automatic agent handoff.
+
+---
+
+## Architecture Overview (Redesigned)
+
+### What Changed
+
+Previously: User → RED → (wait for approval) → User → GREEN → (wait for approval) → User → REFACTOR  
+**Now**: User → RED (inline Q&A) → GREEN (auto-invoke) (inline Q&A) → REFACTOR (auto-invoke) (inline Q&A) → Done
+
+**Benefits:**
+- ✅ **Single message per phase**: You respond once with 6 answers
+- ✅ **Automatic handoff**: Agents call each other automatically
+- ✅ **Massive token savings**: No context re-loading between phases
+- ✅ **No manual invocation**: Forget about @mentions after RED
+- ✅ **Same conversation context**: All phases in single thread
 
 ---
 
 ## Kata Overview
 
 **Text Processing Kata**
-- Analyze blog post text to find most common words and character count
+- Analyze blog post text for most common words and character count
 - Kata file: `Text Processing/kata.txt`
-- Test project: `TestProject1` (already configured with NUnit + AwesomeAssertions)
+- Test project: `TestProject1` (NUnit + AwesomeAssertions)
 
 ---
 
 ## Phase 1: RED - Write Failing Tests
 
-**Goal**: Write tests that define the expected behavior BEFORE implementation exists.
+### How to Invoke (Only User Action)
 
-### How to Invoke
-
-In your OpenCode terminal, type:
+In your OpenCode terminal, send this ONCE:
 
 ```
 @tdd-red-phase
 
 Kata: Text Processing (blog post analyzer)
 
-Requirements from kata.txt:
-1. Create a Processor interface/class that analyzes text
+Requirements:
+1. Create TextProcessor class that analyzes text
 2. Should find top 10 most common words (case-insensitive)
 3. Should count total words in text
 4. Words with same frequency don't need alphabetical order
 5. Use test case: "Hello, this is an example for you to practice. You should grab this text and make it as your test case."
 
-Please write failing tests for these requirements. Use the first test case from the kata.
+Expected output: 
+- Top words: you, this, your, to, text, test, should, practice, make, it
+- Total words: 21
+
+Please help me write failing tests for these requirements.
 ```
 
-### What RED Should Do
+### What RED Will Do
 
-1. ✅ Send 6-question questionnaire about:
-   - Test class naming and location
-   - Test method naming pattern (MethodUnderTest_Scenario_Expected)
-   - Should we create interface or class first?
-   - Edge cases to test
-   - File organization
-   - Any assumptions
+1. **Respond with inline questionnaire**:
+   ```
+   📋 QUESTIONS BEFORE RED PHASE:
+   
+   1. Test Location: Where should test class be created?
+   2. Test Class Name: Name following pattern?
+   3. Test Methods: What scenarios to test?
+   4. Input/Output Examples: Concrete test data?
+   5. Stub Location: Where should TextProcessor.cs live?
+   6. Edge Cases: Null, empty, special chars?
+   
+   Please answer 1-6 in this SAME response.
+   ```
 
-2. ✅ Wait for your answers
+2. **You respond with answers** (in the same message thread):
+   ```
+   1. TestProject1/TextProcessor_Analyze_Tests.cs
+   2. Analyze_WithTextAnalysis_Tests
+   3. Test top 10 words extraction, word count accuracy, case-insensitive matching
+   4. Input: "Hello, this is..." → 21 words, top word "you" appears 2x
+   5. Text Processing/TextProcessor.cs
+   6. Edge cases: empty string, null input, single word
+   ```
 
-3. ✅ Create test file with failing tests:
-   - Tests for top 10 words extraction
-   - Tests for word count
-   - Tests for case-insensitivity
-   - All tests should FAIL (red state)
+3. **RED immediately creates tests and stubs**:
+   - Creates test file with 3-4 failing tests
+   - All tests use AwesomeAssertions
+   - Creates TextProcessor.cs with empty Analyze method
+   - Runs tests, verifies they FAIL
+   - Shows status:
+   ```
+   ✅ RED PHASE COMPLETE
+   
+   📊 Tests: 3 created and FAILING (expected)
+   📝 Stubs: TextProcessor.cs with empty Analyze method
+   ⏭️ Invoking GREEN phase automatically...
+   ```
 
-4. ✅ Show output with:
-   - List of files created
-   - Count of failing tests
-   - Reason for failure (production code doesn't exist yet)
-
-### Expected Output Format
-
-```
-📋 QUESTIONS BEFORE RED PHASE:
-
-1. Where should test file be created? (e.g., TestProject1/TextProcessorTests.cs)
-2. Should we create the Processor class or interface first?
-3. [4 more questions]
-
-Please answer above before I proceed with code changes.
-```
-
-### Approve RED Phase
-
-Once RED phase is complete and you've reviewed the failing tests, respond:
-
-```
-Tests look good. RED phase approved. Ready for GREEN phase.
-```
+4. **GREEN phase auto-invokes** (no user action needed)
 
 ---
 
 ## Phase 2: GREEN - Implement Minimum Logic
 
-**Goal**: Write ONLY the minimum code needed to make tests pass. NO refactoring.
+### How It's Invoked (Automatic)
 
-### How to Invoke
+RED phase automatically calls GREEN with context.
 
-After RED is approved:
+### What GREEN Will Do
 
-```
-@tdd-green-phase
+1. **Respond with inline questionnaire**:
+   ```
+   📋 QUESTIONS BEFORE GREEN PHASE:
+   
+   1. Data Structure: Dictionary or List for word frequencies?
+   2. Parsing: LINQ Split or manual parsing?
+   3. Case Handling: Convert to lowercase?
+   4. Punctuation: Use Regex to remove?
+   5. Top 10: OrderByDescending + Take(10)?
+   6. Edge Cases: Return empty result for null/empty?
+   
+   Please answer 1-6 in this SAME response.
+   ```
 
-The RED phase created failing tests. Now implement the minimum logic to make all tests pass.
+2. **You respond with answers**:
+   ```
+   1. Dictionary<string, int> for frequencies
+   2. Split() with StringSplitOptions.RemoveEmptyEntries
+   3. Yes, convert to lowercase
+   4. Yes, simple regex for punctuation
+   5. Yes, OrderByDescending + Take(10)
+   6. Return empty AnalysisResult for null/empty
+   ```
 
-Do NOT:
-- Refactor code
-- Improve naming
-- Reorganize files
-- Modify any tests
+3. **GREEN immediately implements**:
+   - Writes TextProcessor.Analyze method
+   - Implementation is SIMPLE (no refactoring, optimization OK is fine)
+   - Runs tests to verify ALL PASS
+   - Shows status:
+   ```
+   ✅ GREEN PHASE COMPLETE
+   
+   📊 Tests: 3 PASSING (all green)
+   📝 Implementation: TextProcessor.Analyze method
+   ⏭️ Invoking REFACTOR phase automatically...
+   ```
 
-Just make them pass with the simplest possible implementation.
-```
-
-### What GREEN Should Do
-
-1. ✅ Send 6-question questionnaire about:
-   - Implementation approach
-   - Should we use LINQ or loops?
-   - Dictionary or List for word frequency?
-   - How to handle punctuation?
-   - Any shortcuts to simplify?
-   - Edge case handling
-
-2. ✅ Wait for your answers
-
-3. ✅ Create/implement Processor class:
-   - Analyze method to process text
-   - Returns word frequency data
-   - Minimum viable implementation (might look ugly, that's OK!)
-
-4. ✅ Show output with:
-   - List of files modified
-   - Count of passing tests
-   - Confirmation all tests pass
-   - Note: Code may look rough (REFACTOR phase fixes this)
-
-### Approve GREEN Phase
-
-Once tests pass:
-
-```
-All tests passing. GREEN phase approved. Ready for REFACTOR phase.
-```
+4. **REFACTOR phase auto-invokes** (no user action needed)
 
 ---
 
 ## Phase 3: REFACTOR - Improve Code Quality
 
-**Goal**: Clean up code while keeping all tests GREEN. NO behavior changes.
+### How It's Invoked (Automatic)
 
-### How to Invoke
+GREEN phase automatically calls REFACTOR with context.
 
-After GREEN is approved:
+### What REFACTOR Will Do
+
+1. **Respond with inline questionnaire**:
+   ```
+   📋 QUESTIONS BEFORE REFACTOR PHASE:
+   
+   1. Method Extraction: Split into separate methods?
+   2. Naming: Improve variable names (x → wordEntry)?
+   3. SOLID: Create separate classes for parsing/sorting?
+   4. Duplication: Any repeated patterns to eliminate?
+   5. Validation: Add null checks or validation methods?
+   6. Documentation: Add XML comments?
+   
+   Please answer 1-6 in this SAME response.
+   ```
+
+2. **You respond with answers**:
+   ```
+   1. Yes, extract ExtractWords, CalculateFrequencies, GetTop10
+   2. Yes, rename variables for clarity
+   3. No, keep in single class for now
+   4. Remove duplicate punctuation removal
+   5. Yes, add validation method
+   6. Yes, add XML documentation
+   ```
+
+3. **REFACTOR immediately improves code**:
+   - Extracts methods for clarity
+   - Improves naming throughout
+   - Applies SOLID principles if requested
+   - Runs tests to verify ALL still PASS
+   - Shows completion status:
+   ```
+   ✅ REFACTOR PHASE COMPLETE
+   
+   📊 Improvements:
+      ✓ Extracted 3 methods
+      ✓ Improved variable naming
+      ✓ Added XML documentation
+      ✓ Tests: 3 PASSING
+   
+   🎉 TDD CYCLE COMPLETE!
+      RED      ✅ Failing tests written
+      GREEN    ✅ Logic implemented
+      REFACTOR ✅ Code improved
+   ```
+
+---
+
+## Complete Flow (One Example Session)
 
 ```
-@tdd-refactor-phase
+USER:
+@tdd-red-phase [send kata requirements]
 
-All tests are passing. Now refactor the code to improve quality:
+RED:
+📋 QUESTIONS BEFORE RED PHASE:
+1. Test location?
+2. Test class name?
+3. Test scenarios?
+4. Input/output examples?
+5. Stub location?
+6. Edge cases?
 
-- Apply SOLID principles
-- Improve naming
-- Reduce duplication
-- Better separation of concerns
-- Cleaner code structure
+USER (same response):
+1. TestProject1/TextProcessor_Analyze_Tests.cs
+2. Analyze_WithTextAnalysis_Tests
+3. [answers 3-6]
 
-Keep all tests GREEN. No behavior changes.
-```
+RED: [creates tests, stubs, runs, verifies failure]
+✅ RED COMPLETE
+⏭️ Invoking GREEN...
 
-### What REFACTOR Should Do
+GREEN:
+📋 QUESTIONS BEFORE GREEN PHASE:
+1. Data structure?
+2. Parsing approach?
+3. Case handling?
+4. Punctuation removal?
+5. Top 10 selection?
+6. Edge cases?
 
-1. ✅ Send 6-question questionnaire about:
-   - Naming improvements needed?
-   - SOLID principle violations?
-   - Code duplication to eliminate?
-   - Performance improvements?
-   - Test organization improvements?
-   - Any method extraction needed?
+USER (same response):
+1. Dictionary<string, int>
+2. Split() method
+3. [answers 4-6]
 
-2. ✅ Wait for your answers
+GREEN: [implements logic, runs tests, verifies all pass]
+✅ GREEN COMPLETE
+⏭️ Invoking REFACTOR...
 
-3. ✅ Refactor code:
-   - Improve naming (PascalCase, camelCase)
-   - Extract methods
-   - Apply SOLID principles
-   - Reorganize for clarity
-   - Update tests formatting (not logic)
+REFACTOR:
+📋 QUESTIONS BEFORE REFACTOR PHASE:
+1. Method extraction?
+2. Naming improvements?
+3. SOLID principles?
+4. Duplication removal?
+5. Validation methods?
+6. Documentation?
 
-4. ✅ Show output with:
-   - List of files modified
-   - Improvements made
-   - Confirmation all tests still pass
-   - Summary of quality improvements
+USER (same response):
+1. Yes, extract 3 methods
+2. Yes, rename variables
+3. [answers 5-6]
 
-### Approve REFACTOR Phase
-
-Once refactoring is complete:
-
-```
-Code looks much better. REFACTOR phase approved. Cycle complete!
+REFACTOR: [improves code, runs tests, verifies still green]
+✅ REFACTOR COMPLETE
+🎉 TDD CYCLE DONE!
 ```
 
 ---
 
-## Complete Cycle Summary
+## Key Improvements Over Previous Version
 
-After all three phases:
+### ✅ Token Efficiency
+- **Before**: 3 messages per phase (question, answer, implementation) = 9 messages
+- **Now**: 2 messages per phase (inline question + implementation) = 6 messages
+- **Savings**: 33% fewer messages, massive context reduction
 
-```
-✅ RED PHASE:    Tests written, failing
-✅ GREEN PHASE:  Logic implemented, tests passing
-✅ REFACTOR:     Code improved, tests still passing
+### ✅ Automatic Handoff
+- **Before**: Manual `@tdd-green-phase` invocation needed
+- **Now**: RED automatically invokes GREEN, GREEN invokes REFACTOR
+- **Result**: True end-to-end flow without user intervention
 
-🎉 Text Processing kata complete!
-```
+### ✅ Single Conversation Context
+- **Before**: Multiple separate conversations, context loss between phases
+- **Now**: All phases in single thread, full context maintained
+- **Result**: Agents have complete history, better decisions
+
+### ✅ Same-Message Q&A
+- **Before**: Questionnaire → user provides answer in new message
+- **Now**: Questionnaire inline → user responds in same turn
+- **Result**: More natural flow, no artificial delays
 
 ---
 
@@ -211,75 +293,87 @@ After all three phases:
 
 ```
 TestProject1/
-├── TextProcessorTests.cs          (Test file created in RED phase)
-├── TestProject1.csproj            (Already configured)
+├── TextProcessor_Analyze_Tests.cs          (created in RED)
+├── TestProject1.csproj
 
 Text Processing/
-├── Processor.cs                   (or similar - created in GREEN phase)
+├── TextProcessor.cs                        (created in RED, implemented in GREEN, refactored in REFACTOR)
 ├── Text Processing.csproj
 ├── kata.txt
+└── Program.cs
 ```
-
----
-
-## Key Rules to Remember
-
-### RED Phase
-- ❌ NO production logic
-- ✅ Only stub code to compile
-- ✅ Tests must FAIL
-- ✅ Send questionnaire first
-
-### GREEN Phase
-- ❌ NO refactoring
-- ❌ NO test modification
-- ✅ Minimum viable implementation
-- ✅ Tests must PASS
-
-### REFACTOR Phase
-- ❌ NO new tests
-- ❌ NO behavior changes
-- ✅ Code quality improvements
-- ✅ Tests must stay GREEN
-
-### ALL Phases
-- ✅ Use AwesomeAssertions exclusively
-- ✅ Send questionnaire before changes
-- ✅ Wait for user approval
-- ✅ Clear phase completion status
 
 ---
 
 ## Troubleshooting
 
-### "Agent didn't ask questions"
-- Copy/paste the full kata requirements in your prompt
-- Ask explicitly: "Send questionnaire BEFORE making changes"
-- Check agent loads AGENTS.md context correctly
+### "Agent didn't send questionnaire inline"
+- Check agent's system prompt loads correctly
+- Verify agent prompt contains "inline questionnaire" section
+- If still broken: send questionnaire as separate message manually
 
-### "Tests don't use AwesomeAssertions"
-- This is critical - AwesomeAssertions are required
-- Check if agent loaded `testing-practices.md` skill
-- Look at that skill file for proper syntax
+### "Tests don't pass after GREEN"
+- GREEN implementation might be incomplete
+- Ask GREEN to debug with specific error message
+- Don't move to REFACTOR until all tests pass
 
-### "Agent made changes across phases"
-- This violates phase separation
-- Read the agent's system prompt in `.claude/agents/`
-- Ensure questionnaire was sent first
+### "REFACTOR changed behavior"
+- Tests should catch this immediately
+- If tests fail in REFACTOR, it means behavior changed (shouldn't happen)
+- Ask REFACTOR to revert and use different approach
 
-### "Tests won't compile"
-- Check project references in .csproj
-- Verify NUnit and AwesomeAssertions packages installed
-- Run: `dotnet restore` and `dotnet build`
+### "Agents aren't calling each other"
+- Verify agents have Task tool enabled in frontmatter
+- Check AGENTS.md is loaded by each agent
+- If still broken: manually invoke next phase with `@agent-name`
+
+---
+
+## Rules to Remember
+
+### RED Phase
+- ✅ Inline questionnaire before creating tests
+- ✅ Tests must FAIL
+- ✅ Uses AwesomeAssertions ONLY
+- ✅ Stubs created, no logic
+- ✅ Auto-invokes GREEN
+
+### GREEN Phase
+- ✅ Inline questionnaire before implementing
+- ✅ Tests must PASS
+- ✅ Implementation is simple, no refactoring
+- ✅ No behavior changes
+- ✅ Auto-invokes REFACTOR
+
+### REFACTOR Phase
+- ✅ Inline questionnaire before refactoring
+- ✅ Tests must stay PASSING
+- ✅ Code improved, no behavior changes
+- ✅ Extraction, naming, SOLID applied
+- ✅ Reports completion
+
+### ALL Phases
+- ✅ Questionnaire is INLINE (no new message needed)
+- ✅ User responds with numbered answers (1-6)
+- ✅ Agents proceed immediately after answers
+- ✅ Auto-handoff to next phase
+- ✅ No manual approval needed
 
 ---
 
 ## Next Steps
 
-1. Open your OpenCode terminal
-2. Navigate to this project
-3. Start with RED phase invitation above
-4. Follow the cycle through all three phases
-5. Verify the kata is complete with clean code and passing tests
+1. Copy kata requirements into OpenCode
+2. Send `@tdd-red-phase [requirements]` message
+3. RED sends inline questionnaire
+4. You answer questions 1-6 in same message
+5. RED creates tests, invokes GREEN
+6. GREEN sends inline questionnaire
+7. You answer questions 1-6 in same message
+8. GREEN implements, invokes REFACTOR
+9. REFACTOR sends inline questionnaire
+10. You answer questions 1-6 in same message
+11. REFACTOR improves, reports completion
+12. ✅ Done! Full cycle complete in ~4 conversation turns total
 
 Good luck!
