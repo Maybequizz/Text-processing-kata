@@ -207,9 +207,9 @@ See `skills/refactoring-practices.md` for:
 
 ---
 
-## Running the Cycle
+## Running the TDD Cycle
 
-Each phase is invoked independently:
+Each phase is invoked independently and must be approved before moving to the next:
 
 1. **Start RED**: Request the first phase with a feature description
 2. **Approve RED**: Review and confirm test failure
@@ -218,63 +218,71 @@ Each phase is invoked independently:
 5. **Invoke REFACTOR**: Request cleanup
 6. **Approve REFACTOR**: Verify final quality
 
-No automatic progression — each phase waits for explicit user approval.
+No automatic progression — each phase waits for **explicit user approval**.
 
 ---
 
 ## How Agents Load This Context
 
-This file (`AGENTS.md`) serves as the **source of truth** for all three subagents. Each subagent in its frontmatter preloads this knowledge via the skills system:
+### Automatic Context Loading (No Configuration Needed)
+When each subagent starts, Claude Code **automatically loads**:
+1. ✅ This `AGENTS.md` file as contextual reference
+2. ✅ Each agent's individual skill files (preloaded via frontmatter)
+3. ✅ Git repository state
+4. ✅ Project configuration
 
-```yaml
----
-name: tdd-red-phase
-description: RED phase expert - writes failing tests first
-skills:
-  - testing-practices  # Domain knowledge for testing
----
+### What Each Agent Receives at Startup
+```
+tdd-red-phase        →  System Prompt (from agent markdown body)
+                     +  AGENTS.md (this file - shared context)
+                     +  skills/testing-practices.md (preloaded)
+                     
+tdd-green-phase      →  System Prompt (from agent markdown body)
+                     +  AGENTS.md (this file - shared context)
+                     +  skills/testing-practices.md (preloaded)
+                     
+tdd-refactor-phase   →  System Prompt (from agent markdown body)
+                     +  AGENTS.md (this file - shared context)
+                     +  skills/refactoring-practices.md (preloaded)
+                     +  skills/testing-practices.md (preloaded)
 ```
 
-When an agent starts, it has:
-1. This `AGENTS.md` as reference context (loaded automatically)
-2. Its specific skill files (testing-practices.md or refactoring-practices.md)
-3. Its own detailed system prompt in the agent markdown body
-
-**All three agents READ this file to understand:**
-- The TDD philosophy
-- Communication protocol
-- Rules and constraints
-- Cross-phase dependencies
-- Best practices
+### How This Works in Practice
+1. **System Loads Agent**: User invokes `@tdd-red-phase` [task]
+2. **Context Assembly**: Claude Code loads AGENTS.md + skills + agent prompt
+3. **Agent Executes**: Agent has complete context to understand system
+4. **No Redundancy**: Agent's individual .md file has execution logic, not system philosophy
 
 ---
 
 ## Information Architecture
 
-### For Humans Starting Out
-→ **Read**: `.claude/README.md` (quick start guide)
+### For Humans Getting Started
+→ **Read**: `.claude/README.md` (quick start, examples, navigation)
 
-### For Technical Reference
-→ **Read**: `AGENTS.md` (this file - complete technical spec)
+### For Humans Deep Dive
+→ **Read**: `AGENTS.md` (this file - complete technical specification)
 
-### For Specific Domain Knowledge
-→ **Read**: `skills/testing-practices.md` (RED + GREEN phases)
-→ **Read**: `skills/refactoring-practices.md` (REFACTOR phase)
+### For Domain Knowledge (Humans & Agents)
+→ **Read**: `skills/testing-practices.md` (testing tactics, examples)
+→ **Read**: `skills/refactoring-practices.md` (refactoring tactics, examples)
 
-### For Agents
-- Each agent loads this file automatically as context
-- Each agent also loads its relevant skill file
-- No agent reads README.md (that's for humans)
+### For Agents (Automatic)
+- ✅ Agents automatically load `AGENTS.md` for system philosophy
+- ✅ Agents load their specific skills (testing or refactoring)
+- ✅ Agents execute their own .md file system prompt
+- ❌ Agents do NOT read README.md (human-only documentation)
 
 ---
 
-## No Duplication Policy
+## Single Source of Truth Policy
 
-This document is the **single source of truth**:
-- ✅ README.md points here for details
-- ✅ Skills files contain domain-specific tactics
-- ✅ Agent .md files contain execution instructions
-- ❌ No information is duplicated across files
+This document (`AGENTS.md`) is the authoritative specification:
+- ✅ **README.md**: References AGENTS.md, provides entry point
+- ✅ **Skills files**: Contain domain-specific tactics, not system rules
+- ✅ **Agent .md files**: Contain execution logic, reference AGENTS.md
+- ❌ **NO duplication**: System rules exist only in one place
+- ❌ **NO conflicting information**: All agents follow same spec
 
 ---
 
