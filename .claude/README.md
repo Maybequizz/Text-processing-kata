@@ -40,6 +40,12 @@ Invoke each phase with `@mention`:
   - Rules and constraints
   - Best practices
 
+- **`../TEST_SYSTEM.md`** — Step-by-step guide to test the system
+  - Real kata example: Text Processing
+  - Copy-paste prompts for each phase
+  - What to expect from each agent
+  - Troubleshooting tips
+
 - **`skills/testing-practices.md`** — Testing guide
   - Test naming: `MethodUnderTest_Scenario_ExpectedBehavior`
   - AAA pattern (Arrange-Act-Assert)
