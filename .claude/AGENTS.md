@@ -12,7 +12,7 @@ This project uses a specialized 3-phase TDD subagent system. Each phase is handl
 2. **GREEN Phase**: Implement minimum logic to pass tests. No refactoring. No test modification.
 3. **REFACTOR Phase**: Clean code and tests. All tests must remain green. No logic changes.
 
-Each phase must be **completed and approved** before moving to the next. Subagents **never assume** and ask questions via questionnaire format in the same message.
+Each phase **auto-invokes the next** (no manual intervention). Subagents **never assume** and ask questions via questionnaire format **inline in the same message**.
 
 ---
 
@@ -46,56 +46,74 @@ Assert.Throws<ArgumentException>(() => action());
 ### 1. **tdd-red-phase** — RED: Define the Failure
 **Persona**: Skeptic who writes tests before production code exists.
 **Constraints**: Only stub code, no production logic.
-**Question Format**: Sends numbered questionnaire before any code changes.
-**Output**: Clear RED state with failing test and reason for failure.
+**Communication**: Sends inline questionnaire, waits for answers, creates tests immediately.
+**Handoff**: Auto-invokes GREEN phase via Task tool (no user approval).
+**Output**: Clear RED state with failing tests and stub code.
 
 ### 2. **tdd-green-phase** — GREEN: Make It Pass
 **Persona**: Pragmatist who writes minimum viable code.
 **Constraints**: No refactoring, no test modification, production logic only.
-**Question Format**: Sends numbered questionnaire before any code changes.
+**Communication**: Sends inline questionnaire, waits for answers, implements immediately.
+**Handoff**: Auto-invokes REFACTOR phase via Task tool (no user approval).
 **Output**: All tests passing, minimal implementation highlighted.
 
 ### 3. **tdd-refactor-phase** — REFACTOR: Clean It Up
 **Persona**: Perfectionist who improves design while keeping tests green.
 **Constraints**: No behavior changes, no new tests, all tests must stay green.
-**Question Format**: Sends numbered questionnaire before any code changes.
-**Output**: Improved code quality, all tests still passing.
+**Communication**: Sends inline questionnaire, waits for answers, refactors immediately.
+**Handoff**: Reports completion (final phase - no further invocation).
+**Output**: Improved code quality, all tests still passing, cycle complete.
 
 ---
 
 ## Communication Protocol
 
-### Before Any Code Change
+### Inline Questionnaire Pattern (CRITICAL)
+
 **All three subagents must:**
-1. Analyze the current state
-2. Formulate questions (max 6 items)
-3. Send questionnaire in the SAME MESSAGE
-4. Wait for user responses
-5. Only then modify code
+1. Send questionnaire INLINE in their initial response (not separate message)
+2. Ask numbered questions (max 6 items)
+3. **Wait for user answers in the SAME message turn** (no new message needed)
+4. Parse answers and proceed with code changes
+5. After completion, auto-invoke next phase (or report if final)
 
 ### Questionnaire Format
+
 ```
 📋 QUESTIONS BEFORE [PHASE NAME]:
 
-1. [Question about test scope/requirements]
-2. [Question about edge cases]
-3. [Question about assumptions]
-4. [Question about file location]
-5. [Question about naming conventions]
+1. [Question about requirements/approach]
+2. [Question about specific details]
+3. [Question about edge cases]
+4. [Question about file location/naming]
+5. [Question about priorities]
 6. [Question about any ambiguity]
 
-Please answer above before I proceed with code changes.
+Please answer 1-6 in this same response, then I'll proceed.
 ```
 
-### Phase Completion Output
-```
-✅ PHASE COMPLETE: [PHASE NAME]
+### Phase Completion & Auto-Handoff
 
-📊 Status: ROJO/VERDE/REFACTORED
-📝 Files Changed: [List with line numbers]
-✓ Tests: [Count] passing
-⚠️ Next Steps: Ready for [NEXT PHASE NAME]
+**RED → GREEN:**
 ```
+✅ RED PHASE COMPLETE
+
+📊 Status: FAILING (as expected)
+📝 Files: TestProject1/TextProcessor_Analyze_Tests.cs
+✓ Tests: 3 created and failing
+⏭️ Invoking GREEN phase automatically...
+```
+
+Then uses Task tool:
+```
+@tdd-green-phase
+
+Context: RED phase created 3 failing tests...
+```
+
+**GREEN → REFACTOR:** (Same pattern, GREEN auto-invokes REFACTOR)
+
+**REFACTOR → DONE:** (Reports completion, no further invocation)
 
 ---
 
@@ -158,29 +176,59 @@ See `skills/refactoring-practices.md` for:
 
 ## Example Workflow
 
-### User Request
-> "Write a calculator Add method using TDD"
+### User Invocation (Only One)
+```
+@tdd-red-phase
+
+Write a calculator Add method using TDD.
+Requirements: Add(5, 3) should return 8.
+```
 
 ### RED Phase Execution
-1. RED subagent sends questionnaire (file location, test name format, etc.)
-2. User answers
-3. RED subagent creates failing test
-4. User reviews: "Looks good, test fails as expected"
-5. RED phase complete ✅
+1. RED subagent responds with inline questionnaire
+2. User answers questions 1-6 in **same message**
+3. RED creates failing tests + stubs immediately
+4. RED auto-invokes GREEN
 
 ### GREEN Phase Execution
-1. GREEN subagent sends questionnaire (implementation approach, edge cases, etc.)
-2. User answers
-3. GREEN subagent implements Add method
-4. User reviews: "Tests pass, simple implementation"
-5. GREEN phase complete ✅
+1. GREEN receives context from RED via Task tool
+2. GREEN responds with inline questionnaire
+3. User answers questions 1-6 in **same message**
+4. GREEN implements logic + auto-invokes REFACTOR
 
 ### REFACTOR Phase Execution
-1. REFACTOR subagent sends questionnaire (naming improvements, SOLID violations, etc.)
-2. User answers
-3. REFACTOR subagent improves code design
-4. User reviews: "Better structure, tests still pass"
-5. REFACTOR phase complete ✅
+1. REFACTOR receives context from GREEN via Task tool
+2. REFACTOR responds with inline questionnaire
+3. User answers questions 1-6 in **same message**
+4. REFACTOR improves code + reports completion
+
+### Total Conversation Turns: 4
+- Turn 1: User invokes RED + answers RED questions
+- Turn 2: User answers GREEN questions
+- Turn 3: User answers REFACTOR questions
+- Done: Entire TDD cycle complete
+
+---
+
+## Running the TDD Cycle
+
+**Automatic flow (no manual invocation needed):**
+
+1. **User invokes RED**: `@tdd-red-phase [requirements]`
+2. **RED sends inline questionnaire** → User answers (1-6)
+3. **RED creates tests** → **RED auto-invokes GREEN**
+4. **GREEN sends inline questionnaire** → User answers (1-6)
+5. **GREEN implements** → **GREEN auto-invokes REFACTOR**
+6. **REFACTOR sends inline questionnaire** → User answers (1-6)
+7. **REFACTOR improves code** → **Reports completion**
+
+**Total user interactions: 4 messages**
+- Message 1: Invoke RED + answer RED questions
+- Message 2: Answer GREEN questions
+- Message 3: Answer REFACTOR questions
+- Done!
+
+No need to manually invoke phases, they call each other automatically.
 
 ---
 
