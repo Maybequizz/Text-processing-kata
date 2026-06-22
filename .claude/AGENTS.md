@@ -188,15 +188,22 @@ See `skills/refactoring-practices.md` for:
 
 ```
 .claude/
-├── AGENTS.md (this file)
+├── README.md (Quick start guide for humans)
+├── AGENTS.md (Technical reference - source of truth for agents)
 ├── agents/
-│   ├── tdd-red-phase.agent.md
-│   ├── tdd-green-phase.agent.md
-│   └── tdd-refactor-phase.agent.md
+│   ├── tdd-red-phase.agent.md (RED phase agent)
+│   ├── tdd-green-phase.agent.md (GREEN phase agent)
+│   └── tdd-refactor-phase.agent.md (REFACTOR phase agent)
 └── skills/
-    ├── testing-practices.md
-    └── refactoring-practices.md
+    ├── testing-practices.md (Domain knowledge for testing)
+    └── refactoring-practices.md (Domain knowledge for refactoring)
 ```
+
+**Information Flow:**
+- README.md → Entry point for humans
+- AGENTS.md → Loaded by all agents as context
+- Individual agent .md files → Specific execution instructions
+- Skills → Domain-specific knowledge and examples
 
 ---
 
@@ -215,9 +222,66 @@ No automatic progression — each phase waits for explicit user approval.
 
 ---
 
+## How Agents Load This Context
+
+This file (`AGENTS.md`) serves as the **source of truth** for all three subagents. Each subagent in its frontmatter preloads this knowledge via the skills system:
+
+```yaml
+---
+name: tdd-red-phase
+description: RED phase expert - writes failing tests first
+skills:
+  - testing-practices  # Domain knowledge for testing
+---
+```
+
+When an agent starts, it has:
+1. This `AGENTS.md` as reference context (loaded automatically)
+2. Its specific skill files (testing-practices.md or refactoring-practices.md)
+3. Its own detailed system prompt in the agent markdown body
+
+**All three agents READ this file to understand:**
+- The TDD philosophy
+- Communication protocol
+- Rules and constraints
+- Cross-phase dependencies
+- Best practices
+
+---
+
+## Information Architecture
+
+### For Humans Starting Out
+→ **Read**: `.claude/README.md` (quick start guide)
+
+### For Technical Reference
+→ **Read**: `AGENTS.md` (this file - complete technical spec)
+
+### For Specific Domain Knowledge
+→ **Read**: `skills/testing-practices.md` (RED + GREEN phases)
+→ **Read**: `skills/refactoring-practices.md` (REFACTOR phase)
+
+### For Agents
+- Each agent loads this file automatically as context
+- Each agent also loads its relevant skill file
+- No agent reads README.md (that's for humans)
+
+---
+
+## No Duplication Policy
+
+This document is the **single source of truth**:
+- ✅ README.md points here for details
+- ✅ Skills files contain domain-specific tactics
+- ✅ Agent .md files contain execution instructions
+- ❌ No information is duplicated across files
+
+---
+
 ## References
 
-- [Testing Best Practices](.claude/skills/testing-practices.md)
-- [Refactoring Best Practices](.claude/skills/refactoring-practices.md)
-- Subagent Docs: https://code.claude.com/docs/es/sub-agents
-- Context Files: https://www.mindstudio.ai/blog/codex-agents-md-vs-claude-code-claude-md-comparison
+- [Quick Start Guide](README.md) — For humans new to the system
+- [Testing Best Practices](skills/testing-practices.md) — Domain knowledge for RED & GREEN
+- [Refactoring Best Practices](skills/refactoring-practices.md) — Domain knowledge for REFACTOR
+- Claude Code Subagents: https://code.claude.com/docs/es/sub-agents
+- Context Files Comparison: https://www.mindstudio.ai/blog/codex-agents-md-vs-claude-code-claude-md-comparison
