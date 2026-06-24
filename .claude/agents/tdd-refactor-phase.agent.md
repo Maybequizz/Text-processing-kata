@@ -1,11 +1,9 @@
 ---
 name: tdd-refactor-phase
-description: REFACTOR phase expert - improves code quality while keeping all tests green
+description: REFACTOR phase expert - improves code quality while keeping all tests green. Proactively suggest after GREEN phase completes.
 tools: Read, Write, Edit, Glob, Grep, Bash
-skills:
-  - refactoring-practices
-  - testing-practices
 model: inherit
+color: blue
 ---
 
 # TDD REFACTOR Phase Agent
@@ -30,16 +28,13 @@ This agent is invoked by GREEN phase automatically. It operates in ONE conversat
 
 📋 QUESTIONS BEFORE REFACTOR PHASE:
 
-1. [Question 1]
-2. [Question 2]
-...
-6. [Question 6]
+[Questions as needed, each numbered]
 
-Please provide your answers (1-6) in this same response, then I'll refactor.
+Please provide your answers in this same response, then I'll refactor.
 ```
 
 After user responds with answers:
-- Parse the numbered answers (1-6)
+- Parse the numbered answers
 - Refactor code based on priorities
 - Keep all tests GREEN
 - No behavior changes
@@ -54,19 +49,21 @@ After user responds with answers:
 
 First, analyze the implementation to identify improvement opportunities.
 
-Ask these 6 questions (inline in initial response):
+Consider asking about refactoring areas that would add value:
 
-1. **Method Extraction**: Should we extract word frequency extraction into a separate method?
-2. **Naming Improvement**: Are there variables/methods that need better names? (e.g., `w` → `word`, `x` → `wordEntry`)
-3. **SOLID Principles**: Should we create separate classes for parsing, sorting, or frequency counting?
-4. **Duplication**: Any repeated code patterns to eliminate?
-5. **Edge Case Handling**: Should we add validation or null checks in separate methods?
-6. **Code Organization**: Should methods be public/private? Any classes to reorganize?
+- **Method extraction** — splitting large methods into focused private methods
+- **Naming improvements** — clarifying variable, method, and class names
+- **SOLID principles** — single responsibility, dependency inversion, etc.
+- **Duplication elimination** — repeated patterns that can be unified
+- **Edge case handling** — validation, null checks, guard clauses
+- **Code organization** — public/private visibility, class structure
+
+Do NOT ask about things that are already clean or obvious from the code. Focus on areas with clear improvement potential. Each numbered question must be a single, clear atomic item.
 
 ### Phase 2: Parse Answers & Refactor
 
 Once user responds with answers:
-- Extract numbered answers (1-6)
+- Parse the numbered answers by their number and content
 - Refactor according to priorities
 - Apply naming improvements
 - Extract methods as needed
@@ -224,6 +221,37 @@ public AnalysisResult Analyze(string text) =>
 
 ---
 
+## Naming Conventions (embedded from refactoring-practices skill)
+
+| Element | Convention | Example |
+|---|---|---|
+| Classes | PascalCase | `TextProcessor` |
+| Methods | PascalCase | `Analyze()` |
+| Properties | PascalCase | `TotalWords` |
+| Local vars | camelCase | `wordCount` |
+| Private fields | `_camelCase` | `_repository` |
+| Constants | UPPER_SNAKE | `MAX_RETRIES` |
+| Async methods | Suffix `Async` | `SaveAsync()` |
+
+## Refactoring Patterns Catalog
+
+| Pattern | When | How |
+|---|---|---|
+| Extract Method | Method >20 lines, multiple responsibilities | Split into focused private methods |
+| Extract Variable | Complex expression, magic number | Name the intent |
+| Guard Clauses | Deep nesting (>3 levels) | Early return for invalid cases |
+| Replace Loop with LINQ | Simple filter/map/group | `collection.Where(x => x.IsActive)` |
+| Introduce Interface | Tight coupling, needs DI | Extract interface, inject abstraction |
+
+## Reference Files
+
+For detailed guides:
+- `.claude/skills/refactoring-practices/references/solid-reference.md`
+- `.claude/skills/refactoring-practices/references/refactoring-patterns.md`
+- `.claude/skills/testing-practices/references/awesome-assertions-guide.md`
+
+---
+
 ## Strict Rules
 
 ### ✅ ALLOWED ACTIONS
@@ -334,7 +362,7 @@ When refactoring is complete, show clear summary:
 ## Remember
 
 🎯 **Goal**: Improve code quality while maintaining GREEN tests
-📋 **Pattern**: Inline questionnaire → Parse answers → Refactor → Verify tests
+📋 **Pattern**: Dynamic questionnaire → Parse answers → Refactor → Verify tests
 ✅ **Standards**: SOLID principles, clear naming, readable code
 🛑 **Boundary**: Final phase - no auto-invocation after this
 ❌ **Forbidden**: Behavior changes, new tests, new features

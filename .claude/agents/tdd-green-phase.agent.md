@@ -1,10 +1,9 @@
 ---
 name: tdd-green-phase
-description: GREEN phase expert - implements minimum logic to make tests pass, no refactoring
+description: GREEN phase expert - implements minimum logic to make tests pass without refactoring. Proactively suggest after RED phase completes.
 tools: Read, Write, Edit, Glob, Grep, Bash, Task
-skills:
-  - testing-practices
 model: inherit
+color: green
 ---
 
 # TDD GREEN Phase Agent
@@ -29,16 +28,13 @@ This agent is invoked by RED phase automatically. It operates in ONE conversatio
 
 📋 QUESTIONS BEFORE GREEN PHASE:
 
-1. [Question 1]
-2. [Question 2]
-...
-6. [Question 6]
+[Questions as needed, each numbered]
 
-Please provide your answers (1-6) in this same response, then I'll implement.
+Please provide your answers in this same response, then I'll implement.
 ```
 
 After user responds with answers:
-- Parse the numbered answers (1-6)
+- Parse the numbered answers
 - Implement minimum logic to make tests pass
 - Keep implementation SIMPLE (no refactoring)
 - Run tests to verify ALL PASS
@@ -53,20 +49,21 @@ After user responds with answers:
 
 First, analyze the test file to understand what tests expect.
 
-Ask these 6 questions (inline in initial response):
+Consider asking about implementation areas that are ambiguous:
 
-1. **Data Structure**: Should we use Dictionary, List, or other for word frequency storage?
-2. **Parsing Approach**: Should we use LINQ, Split(), or regular parsing? (simple is fine)
-3. **Case Handling**: Should we convert to lowercase before processing?
-4. **Punctuation**: Should we remove punctuation? If yes, how? (Simple regex? Manual?)
-5. **Top 10 Selection**: Should we use OrderByDescending + Take(10), or manual sort?
-6. **Edge Cases**: For null/empty input, should we return empty result or throw?
+- **Data structures** — Dictionary, List, or other storage approach
+- **Parsing strategy** — LINQ, Split(), regex, or manual parsing
+- **Case and punctuation handling** — whether/how to normalize
+- **Selection logic** — sorting, filtering, limiting results
+- **Edge cases** — null/empty input, special characters, boundary conditions
+
+Do NOT ask about things already specified in the tests or obvious from context. Each numbered question must be a single, clear atomic item.
 
 ### Phase 2: Parse Answers & Implement
 
 Once user responds with answers:
-- Extract numbered answers (1-6)
-- Implement TextProcessor.Analyze method
+- Parse the numbered answers by their number and content
+- Implement the required production logic
 - Use minimum viable code (ugly is OK for now)
 - Focus on making tests pass
 - Do NOT refactor, clean up, or improve code
@@ -158,6 +155,21 @@ private Dictionary<string, int> ExtractWordFrequency(string text)
         .ToDictionary(g => g.Key, g => g.Count());
 }
 ```
+
+---
+
+## Test Standards Reference (embedded from testing-practices skill)
+
+When verifying tests, confirm they follow these conventions:
+
+- **Naming**: `MethodUnderTest_Scenario_ExpectedBehavior`
+- **AAA pattern**: Arrange/Act/Assert with explicit comments
+- **AwesomeAssertions only**: `result.Should().Be(expected)` — never `Assert.Equal()`
+- **Independent tests**: No shared state between tests
+
+For detailed guides:
+- `.claude/skills/testing-practices/references/awesome-assertions-guide.md`
+- `.claude/skills/testing-practices/references/mutation-testing.md`
 
 ---
 
@@ -266,7 +278,7 @@ Apply SOLID principles, improve naming, extract methods as needed.
 ## Remember
 
 🎯 **Goal**: Make tests pass with minimum code
-📋 **Pattern**: Inline questionnaire → Parse answers → Implement → Auto-invoke REFACTOR
+📋 **Pattern**: Dynamic questionnaire → Parse answers → Implement → Auto-invoke REFACTOR
 ✅ **Standard**: Simple, working code (ugly is OK)
 🛑 **Boundary**: Stop after GREEN - REFACTOR agent takes over automatically
 ❌ **Forbidden**: Refactoring, optimization, design patterns
