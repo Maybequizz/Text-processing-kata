@@ -1,15 +1,14 @@
 ﻿namespace TestProject1;
 
-public class Tests
+using TextProcessing;
+
+public class TextProcessorTests
 {
+
     [SetUp]
     public void Setup()
     {
     }
 
-    [Test]
-    public void Test1()
-    {
-        Assert.Pass();
-    }
+    
 }
