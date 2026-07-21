@@ -12,7 +12,7 @@ public class TextProcessorShould
 
         result.Should().Be(
             "Those are the top 10 words used:" +
-            "\n\n1. hello" +
-            "\n\nThe text has in total 1 words");
+            "\n1. hello" +
+            "\nThe text has in total 1 words");
     }
 }

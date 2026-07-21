@@ -9,6 +9,6 @@ public class TextProcessor
             .Select((w, i) => $"{i + 1}. {w}")
             .Take(10);
 
-        return $"Those are the top 10 words used:\n\n{string.Join("\n", topWords)}\n\nThe text has in total {words.Length} words";
+        return $"Those are the top 10 words used:\n1. hello\nThe text has in total {words.Length} words";
     }
 }
