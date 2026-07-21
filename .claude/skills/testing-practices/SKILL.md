@@ -6,8 +6,6 @@ description: |
   Trigger phrases: "write test", "add test", "create test", "fix test", "TDD".
   Enforces AAA pattern with Arrange/Act/Assert comments, MethodUnderTest_Scenario_ExpectedBehavior naming, and AwesomeAssertions exclusively.
   Not for: production code, refactoring logic.
-allowed-tools: "Read, Write, Edit, Glob, Grep, Bash"
-version: 2.0.0
 ---
 
 # Testing Practices
@@ -44,7 +42,7 @@ public void MethodUnderTest_Scenario_ExpectedBehavior()
 
 ### 3. AwesomeAssertions Only (NO native NUnit Assert)
 
-| ✅ Allowed | ❌ Forbidden |
+| Allowed | Forbidden |
 |---|---|
 | `result.Should().Be(value)` | `Assert.Equal(value, result)` |
 | `result.Should().NotBeNull()` | `Assert.NotNull(result)` |

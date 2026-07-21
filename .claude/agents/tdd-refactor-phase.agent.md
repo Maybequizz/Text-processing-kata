@@ -221,34 +221,19 @@ public AnalysisResult Analyze(string text) =>
 
 ---
 
-## Naming Conventions (embedded from refactoring-practices skill)
+## Conventions & Patterns (loaded from skills)
 
-| Element | Convention | Example |
-|---|---|---|
-| Classes | PascalCase | `TextProcessor` |
-| Methods | PascalCase | `Analyze()` |
-| Properties | PascalCase | `TotalWords` |
-| Local vars | camelCase | `wordCount` |
-| Private fields | `_camelCase` | `_repository` |
-| Constants | UPPER_SNAKE | `MAX_RETRIES` |
-| Async methods | Suffix `Async` | `SaveAsync()` |
+Load skills for full conventions:
+```js
+skill({ name: "refactoring-practices" })
+skill({ name: "testing-practices" })
+```
 
-## Refactoring Patterns Catalog
-
-| Pattern | When | How |
-|---|---|---|
-| Extract Method | Method >20 lines, multiple responsibilities | Split into focused private methods |
-| Extract Variable | Complex expression, magic number | Name the intent |
-| Guard Clauses | Deep nesting (>3 levels) | Early return for invalid cases |
-| Replace Loop with LINQ | Simple filter/map/group | `collection.Where(x => x.IsActive)` |
-| Introduce Interface | Tight coupling, needs DI | Extract interface, inject abstraction |
-
-## Reference Files
-
-For detailed guides:
-- `.claude/skills/refactoring-practices/references/solid-reference.md`
-- `.claude/skills/refactoring-practices/references/refactoring-patterns.md`
-- `.claude/skills/testing-practices/references/awesome-assertions-guide.md`
+**Key rules applied by this agent:**
+- PascalCase for classes/methods/properties, `_camelCase` for private fields
+- Extract Method, Guard Clauses, Replace Loop with LINQ
+- All tests must stay GREEN after every change
+- One atomic change at a time
 
 ---
 

@@ -6,8 +6,6 @@ description: |
   Trigger phrases: "refactor", "improve code", "clean up", "extract method", "apply SOLID".
   Enforces file-scoped namespaces, PascalCase/camelCase conventions, method extraction, and DRY.
   Not for: writing tests, adding new features, changing behavior.
-allowed-tools: "Read, Write, Edit, Glob, Grep, Bash"
-version: 2.0.0
 ---
 
 # Refactoring Practices

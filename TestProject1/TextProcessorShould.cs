@@ -1,9 +1,8 @@
-﻿namespace TestProject1;
-
-using TextProcessing;
 using AwesomeAssertions;
+using TextProcessing;
 
-public class TextProcessorTests
+namespace TestProject1;
+public class TextProcessorShould
 {
     [Test]
     public void Analyse_SingleWord_ReturnsWordAsMostUsedAndTotalOfOne()

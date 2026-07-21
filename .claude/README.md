@@ -46,13 +46,13 @@ Invoke each phase with `@mention`:
   - What to expect from each agent
   - Troubleshooting tips
 
-- **`skills/testing-practices.md`** — Testing guide
+- **`.claude/skills/testing-practices/SKILL.md`** — Testing guide
   - Test naming: `MethodUnderTest_Scenario_ExpectedBehavior`
   - AAA pattern (Arrange-Act-Assert)
   - AwesomeAssertions (ONLY assertion library allowed)
   - Test organization and mutation testing
 
-- **`skills/refactoring-practices.md`** — Refactoring guide
+- **`.claude/skills/refactoring-practices/SKILL.md`** — Refactoring guide
   - .NET naming conventions
   - SOLID principles
   - Common refactoring patterns
@@ -147,15 +147,20 @@ Feature complete
 
 ```
 .claude/
+├── AGENTS.md (technical reference, loaded by OpenCode)
 ├── README.md (you are here)
-├── AGENTS.md (technical reference)
 ├── agents/
 │   ├── tdd-red-phase.agent.md
 │   ├── tdd-green-phase.agent.md
 │   └── tdd-refactor-phase.agent.md
 └── skills/
-    ├── testing-practices.md
-    └── refactoring-practices.md
+    ├── README.md (forward ref)
+    ├── testing-practices/
+    │   ├── SKILL.md
+    │   └── references/
+    └── refactoring-practices/
+        ├── SKILL.md
+        └── references/
 ```
 
 ## ✅ What Each Agent Does

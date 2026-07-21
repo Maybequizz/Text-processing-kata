@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Text Processing", "Text Processing\Text Processing.csproj", "{A31C6826-4E74-43B2-A8DB-6CECA09057EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextProcessing", "TextProcessing\TextProcessing.csproj", "{A31C6826-4E74-43B2-A8DB-6CECA09057EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{572604DC-FC5F-4ED3-9239-FFF00303CB7B}"
 EndProject

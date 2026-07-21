@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Text Processing\Text Processing.csproj" />
+        <ProjectReference Include="..\TextProcessing\TextProcessing.csproj" />
     </ItemGroup>
 
     <ItemGroup>
