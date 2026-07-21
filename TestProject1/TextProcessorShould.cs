@@ -15,4 +15,16 @@ public class TextProcessorShould
             "\n1. hello" +
             "\nThe text has in total 1 words");
     }
+    
+    [Test]
+    public void Analyse_DifferentSingleWord_ReturnsWordAsMostUsedAndTotalOfOne()
+    {
+        var processor = new TextProcessor();
+        var result = processor.Analyse("Goodbye");
+
+        result.Should().Be(
+            "Those are the top 10 words used:" +
+            "\n1. goodbye" +
+            "\nThe text has in total 1 words");
+    }
 }
