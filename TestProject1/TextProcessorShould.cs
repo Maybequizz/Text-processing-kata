@@ -12,7 +12,7 @@ public class TextProcessorShould
 
         result.Should().Be(
             "Those are the top 10 words used:" +
-            "\n1. hello" +
+            "\n1. hello\n" +
             "\nThe text has in total 1 words");
     }
     
@@ -24,7 +24,20 @@ public class TextProcessorShould
 
         result.Should().Be(
             "Those are the top 10 words used:" +
-            "\n1. goodbye" +
+            "\n1. goodbye\n" +
             "\nThe text has in total 1 words");
+    }
+    
+    [Test]
+    public void Analyse_twoWords_ReturnsWordsAsMostUsedAndTotalOfTwo()
+    {
+        var processor = new TextProcessor();
+        var result = processor.Analyse("You should");
+
+        result.Should().Be(
+            "Those are the top 10 words used:" +
+            "\n1. you\n" +
+            "\n2. should\n" +
+            "\nThe text has in total 2 words");
     }
 }

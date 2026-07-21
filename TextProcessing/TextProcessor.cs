@@ -4,8 +4,10 @@ public class TextProcessor
 {
     public string Analyse(string text)
     {
-        var words = text.ToLower();
+        var words = text.ToLower().Split(" ");
+        var wordslist = words.Select((word, index) => $"\n{index+1}. {word}\n");
 
-        return $"Those are the top 10 words used:\n1. {words}\nThe text has in total 1 words";
+        var header = "Those are the top 10 words used:";
+        return $"{header}{string.Join("", wordslist)}\nThe text has in total {words.Length} words";
     }
 }
